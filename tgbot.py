@@ -48,6 +48,11 @@ async def choose_class(msg: types.Message):
 
     await msg.answer("Выбери класс:", reply_markup=kb)
 
+@dp.message_handler()
+async def check_message(message: types.Message):
+    if message.text.lower() == "миша":
+        await message.answer("петух")
+
 def get_schedule(class_name, day_index):
 
     day = days[day_index]
