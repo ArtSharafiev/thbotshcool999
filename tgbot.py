@@ -144,5 +144,5 @@ async def teacher_result(call: types.CallbackQuery):
     await call.message.edit_text(f"🏫 {class_name}\n👩‍🏫 {teacher}")
     await call.answer()
 
-if name == "__main__":
+if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=True)
