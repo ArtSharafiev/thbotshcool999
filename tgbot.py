@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 
-bot = Bot(token="")
+bot = Bot(token="8669987183:AAFcQpfraw02VUvsUQjV1qc6Ram8n6ya7cE")
 dp = Dispatcher(bot)
 
 df = pd.read_excel("schedule.xlsx")
@@ -26,89 +26,13 @@ classes = [
     '11а', '11б',
 ]
 
-class_teachers = {
-    "1а": "Федорова Р.Р.",
-    "1б": "Малкова О.П.",
-    "1в": "Хрулькова И.Н.",
-    "2а": "Харисов М.М.",
-    "2б": "Онучина Ю.А.",
-    "2в": "Левкович О.В.",
-    "3а": "Плясина Е.В.",
-    "3б": "Офимкина С.В.",
-    "3в": "Храмова Л.Р.",
-    "4а": "Былинкина И.А.",
-    "4б": "Степанова И.Я.",
-    "4в": "Смирнова С.А.",
-    "5а": "Тюрина О.В.",
-    "5б": "Чекункова Е.В.",
-    "5в": "Хакимова Г.И.",
-    "6а": "Карагузина Н.В.",
-    "6б": "Иванова В.Л.",
-    "6в": "Грачева Н.И.",
-    "7а": "Коган О.Г.",
-    "7б": "Щукина Е.П.",
-    "7в": "Нургалиева Л.П.",
-    "8а": "Камалеева Т.И.",
-    "8б": "Каримова Ф.И.",
-    "8в": "Симонова И.С.",
-    "9а": "Анохина А.А.",
-    "9б": "Кочнева Т.П.",
-    "9в": "Гибадуллина Т.А.",
-    "10а": "Байдина Н.В.",
-    "10б": "Ахмадуллина Л.И.",
-    "11а": "Шишкина Н.Ю.",
-    "11б": "Хайруллина Э.В."
-}
-
-def translate_weather(desc):
-    d = desc.lower()
-
-    if "fog" in d:
-        return "Туман"
-    if "mist" in d:
-        return "Дымка"
-    if "patchy rain nearby" in d:
-        return "Местами дождь"
-    if "light rain" in d:
-        return "Небольшой дождь"
-    if "moderate rain" in d:
-        return "Умеренный дождь"
-    if "heavy rain" in d:
-        return "Сильный дождь"
-    if "patchy snow nearby" in d:
-        return "Местами снег"
-    if "light snow" in d:
-        return "Небольшой снег"
-    if "moderate snow" in d:
-        return "Умеренный снег"
-    if "heavy snow" in d:
-        return "Сильный снег"
-    if "thunder" in d:
-        return "Гроза"
-    if "overcast" in d:
-        return "Пасмурно"
-    if "partly cloudy" in d:
-        return "Переменная облачность"
-    if "cloudy" in d:
-        return "Облачно"
-    if "clear" in d:
-        return "Ясно"
-    if "sunny" in d:
-        return "Солнечно"
-    if "rain" in d:
-        return "Дождь"
-    if "snow" in d:
-        return "Снег"
-
-    return desc
-
 @dp.message_handler(commands=['start'])
 async def start(msg: types.Message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("Расписание 📚", "Погода 🌦", "Классные руководители 👩‍🏫")
+    kb.add("📚 Расписание", "🌦 Погода")
     await msg.answer("Привет!", reply_markup=kb)
 
-@dp.message_handler(lambda m: m.text == "Расписание 📚")
+@dp.message_handler(lambda m: m.text == "📚 Расписание")
 async def choose_class(msg: types.Message):
     await show_classes(msg)
 
@@ -139,7 +63,7 @@ def get_schedule(class_name, day_index):
             text += f"{lesson}. {subject}\n"
 
     if text.strip() == f"📅 {day}\n🏫 Класс: {class_name}":
-        text += "Классный руководитель не известен."
+        text += "Занятий в субботу нет."
 
     return text
 
@@ -207,7 +131,7 @@ def get_weather():
     temp = int(data["current_condition"][0]["temp_C"])
     desc = data["current_condition"][0]["weatherDesc"][0]["value"]
 
-    return temp, translate_weather(desc)
+    return temp, desc
 
 def school_decision(temp, group):
     if group == "junior":
@@ -219,7 +143,7 @@ def school_decision(temp, group):
     if group == "senior":
         return "❌ Можно не идти" if temp <= -30 else "✅ Идти в школу"
 
-@dp.message_handler(lambda m: m.text == "Погода 🌦")
+@dp.message_handler(lambda m: m.text == "🌦 Погода")
 async def weather_menu(msg: types.Message):
     kb = InlineKeyboardMarkup()
     kb.add(
@@ -229,29 +153,6 @@ async def weather_menu(msg: types.Message):
     )
 
     await msg.answer("Выбери класс:", reply_markup=kb)
-
-@dp.message_handler(lambda m: m.text == "Классные руководители 👩‍🏫")
-async def class_teacher_menu(msg: types.Message):
-    kb = InlineKeyboardMarkup(row_width=3)
-
-    buttons = [
-        InlineKeyboardButton(c, callback_data=f"teacher_{c}")
-        for c in classes
-    ]
-
-    kb.add(*buttons)
-
-    await msg.answer("Выбери класс:", reply_markup=kb)
-
-@dp.callback_query_handler(lambda c: c.data.startswith("teacher_"))
-async def teacher_result(call: types.CallbackQuery):
-    class_name = call.data.split("_")[1]
-    teacher = class_teachers.get(class_name, "Классный руководитель не известен")
-
-    text = f"👩‍🏫 Классный руководитель\n🏫 Класс: {class_name}\n\n{teacher}"
-
-    await call.message.edit_text(text)
-    await call.answer()
 
 @dp.callback_query_handler(lambda c: c.data.startswith("weather_"))
 async def weather_result(call: types.CallbackQuery):
