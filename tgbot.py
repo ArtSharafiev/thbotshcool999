@@ -29,10 +29,10 @@ classes = [
 @dp.message_handler(commands=['start'])
 async def start(msg: types.Message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("📚 Расписание", "🌦 Погода")
+    kb.add("Расписание📚", "Погода🌦")
     await msg.answer("Привет!", reply_markup=kb)
 
-@dp.message_handler(lambda m: m.text == "📚 Расписание")
+@dp.message_handler(lambda m: m.text == "Расписание📚")
 async def choose_class(msg: types.Message):
     await show_classes(msg)
 
@@ -53,7 +53,7 @@ def get_schedule(class_name, day_index):
 
     day_rows = df[df["Дни"].astype(str).str.strip().str.lower() == day.lower()]
 
-    text = f"📅 {day}\n🏫 Класс: {class_name}\n\n"
+    text = f"{day}📅\n Класс🏫: {class_name}\n\n"
 
     for _, row in day_rows.iterrows():
         lesson = row["Уроки"]
@@ -62,7 +62,7 @@ def get_schedule(class_name, day_index):
         if pd.notna(subject):
             text += f"{lesson}. {subject}\n"
 
-    if text.strip() == f"📅 {day}\n🏫 Класс: {class_name}":
+    if text.strip() == f"{day}📅\nКласс🏫: {class_name}":
         text += "Занятий в субботу нету."
 
     return text
@@ -135,13 +135,13 @@ def get_weather():
 
 def school_decision(temp, group):
     if group == "junior":
-        return "❌ Можно не идти" if temp <= -25 else "✅ Идти в школу"
+        return "Можно не идти❌" if temp <= -25 else "Идти в школу✅"
 
     if group == "middle":
-        return "❌ Можно не идти" if temp <= -28 else "✅ Идти в школу"
+        return "Можно не идти❌" if temp <= -28 else "Идти в школу✅"
 
     if group == "senior":
-        return "❌ Можно не идти" if temp <= -30 else "✅ Идти в школу"
+        return "Можно не идти❌" if temp <= -30 else "Идти в школу✅"
 
 @dp.message_handler(lambda m: m.text == "🌦 Погода")
 async def weather_menu(msg: types.Message):
@@ -163,7 +163,7 @@ async def weather_result(call: types.CallbackQuery):
 
     text = f"""🌦 Погода в Казани
 🌡 Температура: {temp}°C
-☁️ {desc}
+{desc}☁️
 
 {decision}"""
 
