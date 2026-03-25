@@ -63,7 +63,7 @@ def get_schedule(class_name, day_index):
             text += f"{lesson}. {subject}\n"
 
     if text.strip() == f"📅 {day}\n🏫 Класс: {class_name}":
-        text += "Расписание не найдено."
+        text += "Занятий в субботу нету."
 
     return text
 
