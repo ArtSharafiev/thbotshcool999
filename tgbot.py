@@ -5,7 +5,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 from aiogram.dispatcher.filters import Text
 
-bot = Bot(token="8669987183:AAHkR5t13yVzvIPxL0_ybNwW60liCJojHRU")
+bot = Bot()
 dp = Dispatcher(bot)
 
 df = pd.read_excel("schedule.xlsx")
